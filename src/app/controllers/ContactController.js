@@ -1,9 +1,15 @@
+const ContactsRepository = require('../repositories/ContactsRepository');
+
 // Utilizando uma convenção de nome pros métodos, os quais serão callbacks chamadas pelos endpoints
 class ContactController {
-  index(request, response) {
+  async index(request, response) {
     // Método pra listar todos os registros
     // FindAll
-    response.send('send from Contact Controller');
+    // Temos de usar o async await pois findAll é uma promise
+    const contacts = await ContactsRepository.findAll();
+
+    // Enviar como json pois estamos enviando um array
+    response.json(contacts);
   }
 
   show() {
