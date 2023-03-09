@@ -1,0 +1,11 @@
+{
+  "name": "mycontactsapi",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/Yoac-eng/MyContacts-API.git",
+  "author": "Cayo Cutrim <cayocutrim1991@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
