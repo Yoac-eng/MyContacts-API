@@ -49,11 +49,37 @@ class ContactsRepository {
     });
   }
 
+  findByEmail(email) {
+    return new Promise((resolve) => {
+      const contact = contacts.find((c) => c.email === email);
+
+      resolve(contact);
+    });
+  }
+
   delete(id) {
     return new Promise((resolve) => {
       contacts = contacts.filter((contact) => contact.id !== id);
       // Como não tem corpo pra resposta, podemos só usar o resolve()
       resolve();
+    });
+  }
+
+  create({
+    name, email, phone, category_id,
+  }) {
+    return new Promise((resolve) => {
+      const newContact = {
+        id: uuidv4(),
+        name,
+        email,
+        phone,
+        category_id,
+      };
+
+      contacts.push(newContact);
+      // Retornamos os dados do usuário que se cadastrou
+      resolve(newContact);
     });
   }
 }

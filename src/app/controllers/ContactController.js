@@ -1,24 +1,18 @@
 const ContactsRepository = require('../repositories/ContactsRepository');
 
-// Utilizando uma convenção de nome pros métodos, os quais serão callbacks chamadas pelos endpoints
+// Utilizando uma convenção de nome pros métodos
 class ContactController {
   async index(request, response) {
-    // Método pra listar todos os registros
     // FindAll
     const contacts = await ContactsRepository.findAll();
-
-    // Valor injetado pelo middleware acessivel aqui agora
-    console.log(request.appId);
     response.json(contacts);
   }
 
   async show(request, response) {
-    // Obter UM registro
     // GetById
     const { id } = request.params;
     const contact = await ContactsRepository.findById(id);
 
-    // Pro caso de nenhum contrato ter sido encontrado, mensagem de erro e codigo
     if (!contact) {
       // 404: Not found
       return response.status(404).json({ error: 'Contact not found' });
@@ -29,18 +23,37 @@ class ContactController {
     // request.params;
   }
 
-  store() {
-    // Criar um registro
+  async store(request, response) {
     // Create
+    // Pegar os dados que vamos tratar/cadastrar do body
+    const {
+      name, email, phone, category_id,
+    } = request.body;
+
+    if (!name) {
+      return response.status(400).json({ error: 'Name is required' });
+    }
+
+    // Validar se existe algum email ja cadastrado
+    const contactExists = await ContactsRepository.findByEmail(email);
+    if (contactExists) {
+      return response.status(400).json({ error: 'This e-mail is already been taken' });
+    }
+
+    const contact = await ContactsRepository.create({
+      name, email, phone, category_id,
+    });
+
+    // Retornamos os dados do usuário que se cadastrou
+    response.json(contact);
   }
 
   update() {
-    // Atualizar um registro
+    // Update
   }
 
   async delete(request, response) {
-    // Deletar um registro
-
+    // Delete
     const { id } = request.params;
     const contact = await ContactsRepository.findById(id);
 

@@ -5,6 +5,8 @@ const routes = require('./routes');
 // Instancia o express
 const app = express();
 
+// middleware para aceitar requisições com body json
+app.use(express.json());
 app.use(routes);
 
 // Começar a rodar o servidor http
