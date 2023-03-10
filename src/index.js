@@ -1,12 +1,10 @@
 const express = require('express');
 
-// Importar as rotas para aplicação identificar elas
 const routes = require('./routes');
 
 // Instancia o express
 const app = express();
 
-// .use irá identificar as rotas
 app.use(routes);
 
 // Começar a rodar o servidor http

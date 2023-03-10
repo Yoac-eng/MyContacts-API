@@ -2,7 +2,7 @@
 const { v4: uuidv4 } = require('uuid');
 
 // Array de dados mocadasso enquanto não coloco banco
-const contacts = [
+let contacts = [
   {
     // Vamos utilizar um padrão de ID gerado com Hash por questão de "segurança"
     // Se tivermos ids sequenciais, se uma pessoa souber que seu ID é 3, a das antes dela são 2 e 1
@@ -14,6 +14,13 @@ const contacts = [
     // Contatos terão categorias, que é de onde os numeros vieram
     // Não é tão util agora mas vai servir de chave estrangeira pra fazer o relacionamento no banco
     // Tabela de contatos relacionada com a de categorias
+    category_id: uuidv4(),
+  },
+  {
+    id: uuidv4(),
+    name: 'Jason',
+    email: 'jason@mail.com',
+    phone: '123124123',
     category_id: uuidv4(),
   },
 ];
@@ -31,6 +38,22 @@ class ContactsRepository {
       // NÃO DEVEMOS retornar valores aqui nas promises, pois os valores retornados são ignorados
       // Devemos mandar valores a partir do reject ou do resolve
       // errado: return contacts ou return resolve(contacts);
+    });
+  }
+
+  findById(id) {
+    return new Promise((resolve) => {
+      const contact = contacts.find((c) => c.id === id);
+
+      resolve(contact);
+    });
+  }
+
+  delete(id) {
+    return new Promise((resolve) => {
+      contacts = contacts.filter((contact) => contact.id !== id);
+      // Como não tem corpo pra resposta, podemos só usar o resolve()
+      resolve();
     });
   }
 }
