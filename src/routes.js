@@ -13,7 +13,8 @@ router.get(
 );
 router.get('/contacts/:id', ContactController.show);
 router.delete('/contacts/:id', ContactController.delete);
-// Cadastrar um contato novo
 router.post('/contacts', ContactController.store);
+// Editar um contato
+router.put('/contacts/:id', ContactController.update);
 
 module.exports = router;

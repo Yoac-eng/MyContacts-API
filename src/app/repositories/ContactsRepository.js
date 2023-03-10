@@ -82,6 +82,27 @@ class ContactsRepository {
       resolve(newContact);
     });
   }
+
+  update(id, {
+    name, email, phone, category_id,
+  }) {
+    return new Promise((resolve) => {
+      const updatedContact = {
+        id,
+        name,
+        email,
+        phone,
+        category_id,
+      };
+
+      // Percorrer o array e caso algum deles seja o com id passado(o que vai ser editado)
+      // Atualizar ele com os dados do novo, caso contrario colocar os mesmos dados no lugar
+      // um novo array é gerado
+      contacts = contacts.map((contact) => (contact.id === id ? updatedContact : contact));
+
+      resolve(updatedContact);
+    });
+  }
 }
 
 // Singleton
