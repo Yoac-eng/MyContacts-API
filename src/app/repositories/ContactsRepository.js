@@ -95,9 +95,6 @@ class ContactsRepository {
         category_id,
       };
 
-      // Percorrer o array e caso algum deles seja o com id passado(o que vai ser editado)
-      // Atualizar ele com os dados do novo, caso contrario colocar os mesmos dados no lugar
-      // um novo array é gerado
       contacts = contacts.map((contact) => (contact.id === id ? updatedContact : contact));
 
       resolve(updatedContact);
