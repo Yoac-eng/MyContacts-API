@@ -6,7 +6,8 @@
   "author": "Cayo Cutrim <cayocutrim1991@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "dev": "nodemon src/index.js"
+    "dev": "nodemon src/index.js",
+    "db": "node src/database/index.js"
   },
   "dependencies": {
     "eslint": "^7.32.0 || ^8.2.0",
