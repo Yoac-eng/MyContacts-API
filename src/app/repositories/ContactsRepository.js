@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 // eslint-disable-next-line import/no-extraneous-dependencies
 const { v4: uuidv4 } = require('uuid');
 const db = require('../../database');
@@ -60,22 +61,21 @@ class ContactsRepository {
     });
   }
 
-  create({
+  // Podemos trocar a instancia de uma promise nova por apenas o async no método;
+  // Já fica entendido que ele irá retornar uma promise sem precisar retornar uma instancia de uma de fato
+  async create({
     name, email, phone, category_id,
   }) {
-    return new Promise((resolve) => {
-      const newContact = {
-        id: uuidv4(),
-        name,
-        email,
-        phone,
-        category_id,
-      };
-
-      contacts.push(newContact);
-      // Retornamos os dados do usuário que se cadastrou
-      resolve(newContact);
-    });
+    // Chamamos de row os registros que puxamos do banco, pois as tabelas sao sempre 2d, columns e rows e puxamos as rows
+    // db.query retorna um array, entao precisamos desestruturar como [row] pra pegar a primeira posicao do array
+    const [row] = await db.query(`
+    INSERT INTO contacts(name, email, phone, category_id)
+    VALUES($1, $2, $3, $4)
+    RETURNING *
+    `, [name, email, phone, category_id]);
+    // Colocamos as keybindings $1, $2, $3, $4 pra evitar SQL Injection e fazer com que o postgres trate os dados recebidos
+    // Passamos tambem um array como parametro com esses valores em ordem: $1 = name
+    return row;
   }
 
   update(id, {
