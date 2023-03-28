@@ -92,4 +92,3 @@ class ContactController {
 
 // Singleton, queremos que só uma instância seja acessível
 module.exports = new ContactController();
-// Poderiamos exportar a classe em si, mas aqui não é o caso, ela ja vai instanciada em memória
