@@ -1,68 +1,30 @@
 /* eslint-disable max-len */
 // eslint-disable-next-line import/no-extraneous-dependencies
-const { v4: uuidv4 } = require('uuid');
 const db = require('../../database');
 
-// Array de dados mocadasso enquanto não coloco banco
-let contacts = [
-  {
-    id: uuidv4(),
-    name: 'Robson',
-    email: 'robsonkk@mail.com',
-    phone: '123123123',
-    category_id: uuidv4(),
-  },
-  {
-    id: uuidv4(),
-    name: 'Jason',
-    email: 'jason@mail.com',
-    phone: '123124123',
-    category_id: uuidv4(),
-  },
-];
-
 class ContactsRepository {
-  findAll() {
-    // Como a busca por dados deve ser assincrona, vamos retornar uma promise aqui
-    return new Promise((resolve) => {
-      // Resolve -> disparar um sucesso
-      // Reject -> disparar o erro
-      // PORÉM, UM REPOSITORY NUNCA VAI USAR O REJECT, POIS NÃO IREMOS TRATAR ERRO NENHUM AQUI NESSA
-      // CAMADA DA APLICAÇÃO
-      resolve(contacts);
+  // Metodos assincronos automaticamente retornam promises
+  async findAll(orderBy = 'ASC') {
+    const direction = orderBy.toUpperCase() === 'DESC' ? 'DESC' : 'ASC';
 
-      // NÃO DEVEMOS retornar valores aqui nas promises, pois os valores retornados são ignorados
-      // Devemos mandar valores a partir do reject ou do resolve
-      // errado: return contacts ou return resolve(contacts);
-    });
+    const rows = await db.query(`
+    SELECT * FROM contacts ORDER BY name ${direction}`);
+
+    return rows;
   }
 
-  findById(id) {
-    return new Promise((resolve) => {
-      const contact = contacts.find((c) => c.id === id);
+  async findById(id) {
+    const [row] = await db.query('SELECT * FROM contacts WHERE id = $1', [id]);
 
-      resolve(contact);
-    });
+    return row;
   }
 
-  findByEmail(email) {
-    return new Promise((resolve) => {
-      const contact = contacts.find((c) => c.email === email);
+  async findByEmail(email) {
+    const [row] = await db.query('SELECT * FROM contacts WHERE email = $1', [email]);
 
-      resolve(contact);
-    });
+    return row;
   }
 
-  delete(id) {
-    return new Promise((resolve) => {
-      contacts = contacts.filter((contact) => contact.id !== id);
-      // Como não tem corpo pra resposta, podemos só usar o resolve()
-      resolve();
-    });
-  }
-
-  // Podemos trocar a instancia de uma promise nova por apenas o async no método;
-  // Já fica entendido que ele irá retornar uma promise sem precisar retornar uma instancia de uma de fato
   async create({
     name, email, phone, category_id,
   }) {
@@ -78,22 +40,24 @@ class ContactsRepository {
     return row;
   }
 
-  update(id, {
+  async update(id, {
     name, email, phone, category_id,
   }) {
-    return new Promise((resolve) => {
-      const updatedContact = {
-        id,
-        name,
-        email,
-        phone,
-        category_id,
-      };
+    const [row] = await db.query(`
+    UPDATE contacts
+    SET name = $1, email = $2, phone = $3, category_id = $4 WHERE id = $5
+    RETURNING *
+    `, [name, email, phone, category_id, id]);
 
-      contacts = contacts.map((contact) => (contact.id === id ? updatedContact : contact));
+    return row;
+  }
 
-      resolve(updatedContact);
-    });
+  async delete(id) {
+    const deleteOp = await db.query('DELETE FROM contacts WHERE id = $1', [id]);
+    // Retornar um array vazio sempre []
+    // deleteOp = deleteOperator, basicamente essa nomeclatura diferente
+    // devido ao retorno peculiar de um delete, já que se pegarmos a row vamos pegar undefined
+    return deleteOp;
   }
 }
 
