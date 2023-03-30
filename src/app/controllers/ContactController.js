@@ -21,8 +21,6 @@ class ContactController {
     }
 
     response.json(contact);
-    // request tem o método params para pegar os parametros da req(o que estiver dps do endpoint)
-    // request.params;
   }
 
   // Create
